@@ -60,6 +60,8 @@ occurrences.")
                   (overlay-end ov)
                   'exclusive :expanded t))))
 
+(define-key evil-inner-text-objects-map "i" 'evil-iedit-inner-occurrence)
+
 ;; (evil-define-text-object evil-iedit-a-occurrence
 ;;   (count &optional begin end type)
 ;;   ""
@@ -68,8 +70,6 @@ occurrences.")
 ;;       (evil-range (overlay-start ov)
 ;;                   (overlay-end ov)
 ;;                   'inclusive :expanded t))))
-
-;; (define-key evil-outer-text-objects-map "i" 'evil-iedit-a-occurrence)
 
 (defun evil-iedit-get-occurrence ()
   (let (bounds occurrence-str)
@@ -247,6 +247,7 @@ evil mode. It is not meant to be enabled directly by the user."
   (kbd "RET") 'iedit-toggle-selection
   (kbd "M-d") 'evil-iedit-add-down
   (kbd "M-D") 'evil-iedit-add-up
+  (kbd "M-n") 'iedit-toggle-unmatched-lines-visible
   "n"         'iedit-next-occurrence
   "N"         'iedit-prev-occurrence
   "F"         'iedit-restrict-function
@@ -255,10 +256,10 @@ evil mode. It is not meant to be enabled directly by the user."
 (defvar evil-iedit-occurrence-keymap
   (let ((map (make-sparse-keymap)))
     ;;  (set-keymap-parent map iedit-lib-keymap)
-    (define-key map (kbd "M-U") 'iedit-upcase-occurrences)
-    (define-key map (kbd "M-L") 'iedit-downcase-occurrences)
-    (define-key map (kbd "M-R") 'iedit-replace-occurrences)
-    (define-key map (kbd "M-SPC") 'iedit-blank-occurrences)
+    ;; (define-key map (kbd "M-U") 'iedit-upcase-occurrences)
+    ;; (define-key map (kbd "M-L") 'iedit-downcase-occurrences)
+    ;; (define-key map (kbd "M-R") 'iedit-replace-occurrences)
+    ;; (define-key map (kbd "M-SPC") 'iedit-blank-occurrences)
     ;; (define-key map (kbd "M-D") 'iedit-delete-occurrences)
     (define-key map (kbd "M-N") 'iedit-number-occurrences)
     (define-key map (kbd "M-B") 'iedit-toggle-buffering)
