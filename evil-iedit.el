@@ -105,14 +105,6 @@ occurrences.")
     (when occurrence-str
       (list occurrence-str (car-safe bounds) (cdr-safe bounds)))))
 
-(defun evil-iedit-regexp-quote (exp)
-  "Return a regexp string."
-  (format (cl-case evil-iedit-current-occurrence-type
-            ('symbol "\\_<%s\\_>")
-            ('word "\\<%s\\>")
-            (t "%s"))
-          (regexp-quote exp)))
-
 (defun evil-iedit-refresh-mode-line ()
   (setq iedit-mode
         (replace-regexp-in-string " Iedit:"
@@ -124,7 +116,7 @@ occurrences.")
   (unless occurrence-exp
     (user-error "Cannot find occurrence to use."))
   (setq iedit-initial-string-local occurrence-exp)
-  (iedit-start (evil-iedit-regexp-quote occurrence-exp)
+  (iedit-start (iedit-regexp-quote occurrence-exp)
                (or beg (point-min)) (or end (point-max)))
   (evil-iedit-mode 1)
   (evil-normal-state)
@@ -226,16 +218,12 @@ evil mode. It is not meant to be enabled directly by the user."
   nil nil nil
   (cond (evil-iedit-mode
          (define-key evil-inner-text-objects-map
-           "i" 'evil-iedit-inner-occurrence)
-         (advice-add #'iedit-regexp-quote
-                     :override #'evil-iedit-regexp-quote))
+           "i" 'evil-iedit-inner-occurrence))
         (t
          (when (eq (lookup-key evil-inner-text-objects-map "i")
                    'evil-iedit-inner-occurrence)
            (define-key evil-inner-text-objects-map "i" nil))
-         (iedit-done)
-         (advice-remove #'iedit-regexp-quote
-                        #'evil-iedit-regexp-quote))))
+         (iedit-done))))
 
 (defun turn-off-evil-iedit-mode ()
   "Turn off `evil-iedit-mode'."
