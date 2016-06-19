@@ -45,6 +45,8 @@ occurrences.")
 (defcustom evil-iedit-use-urls t
   "Allow selection of urls as an occurrence for iedit.")
 
+(defcustom evil-iedit-use-emails t
+  "Allow selection of emails as an occurrence for iedit.")
 
 (evil-define-text-object evil-iedit-inner-occurrence
   (count &optional begin end type)
@@ -88,6 +90,11 @@ occurrences.")
       (setq bounds (bounds-of-thing-at-point 'url))
       (setq occurrence-str (thing-at-point 'url))
       (setq iedit-occurrence-type-local 'url))
+     ((and evil-iedit-use-emails
+           (thing-at-point 'email))
+      (setq bounds (bounds-of-thing-at-point 'email))
+      (setq occurrence-str (thing-at-point 'email))
+      (setq iedit-occurrence-type-local 'email))
      ((and evil-iedit-use-symbols
            (thing-at-point 'symbol))
       (setq bounds (bounds-of-thing-at-point 'symbol))
