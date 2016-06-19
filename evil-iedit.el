@@ -45,11 +45,6 @@ occurrences.")
 (defcustom evil-iedit-use-urls t
   "Allow selection of urls as an occurrence for iedit.")
 
-(defcustom evil-iedit-mode-line-string " eIedit:"
-  "")
-
-(defvar evil-iedit-current-occurrence-type nil
-  "Internal: Holds current occurrence type.")
 
 (evil-define-text-object evil-iedit-inner-occurrence
   (count &optional begin end type)
@@ -79,38 +74,31 @@ occurrences.")
       (setq occurrence-str (buffer-substring-no-properties
                             evil-visual-beginning
                             evil-visual-end))
-      (setq evil-iedit-current-occurrence-type 'selection))
+      (setq iedit-occurrence-type-local 'selection))
      ((and evil-iedit-use-punctuation
            (looking-at "\\s.+")
            (skip-syntax-backward ".")
            (looking-at "\\s.+"))
       (setq bounds (cons (match-beginning 0) (match-end 0)))
       (setq occurrence-str (match-string 0))
-      (setq evil-iedit-current-occurrence-type 'punctuation))
+      (setq iedit-occurrence-type-local 'symbol))
      ((and evil-iedit-use-urls
            (require 'ffap nil t)
            (thing-at-point 'url))
       (setq bounds (bounds-of-thing-at-point 'url))
       (setq occurrence-str (thing-at-point 'url))
-      (setq evil-iedit-current-occurrence-type 'url))
+      (setq iedit-occurrence-type-local 'url))
      ((and evil-iedit-use-symbols
            (thing-at-point 'symbol))
       (setq bounds (bounds-of-thing-at-point 'symbol))
       (setq occurrence-str (thing-at-point 'symbol))
-      (setq evil-iedit-current-occurrence-type 'symbol))
+      (setq iedit-occurrence-type-local 'symbol))
      ((thing-at-point 'word)
       (setq bounds (bounds-of-thing-at-point 'evil-word))
       (setq occurrence-str (thing-at-point 'evil-word))
-      (setq evil-iedit-current-occurrence-type 'word)))
+      (setq iedit-occurrence-type-local 'word)))
     (when occurrence-str
       (list occurrence-str (car-safe bounds) (cdr-safe bounds)))))
-
-(defun evil-iedit-refresh-mode-line ()
-  (setq iedit-mode
-        (replace-regexp-in-string " Iedit:"
-                                  evil-iedit-mode-line-string
-                                  iedit-mode))
-  (force-mode-line-update))
 
 (defun evil-iedit-start (occurrence-exp &optional beg end)
   (unless occurrence-exp
@@ -120,8 +108,7 @@ occurrences.")
                (or beg (point-min)) (or end (point-max)))
   (evil-iedit-mode 1)
   (evil-normal-state)
-  (isearch-update-ring occurrence-exp t)
-  (evil-iedit-refresh-mode-line))
+  (isearch-update-ring occurrence-exp t))
 
 ;;;###autoload
 (defun evil-iedit-add-all ()
@@ -201,8 +188,7 @@ depending on the value of `evil-iedit-use-symbols'."
       (progn
         (if up
             (iedit-expand-up-to-occurrence)
-          (iedit-expand-down-to-occurrence))
-          (evil-iedit-refresh-mode-line))
+          (iedit-expand-down-to-occurrence)))
     (apply #'evil-iedit-start (evil-iedit-get-occurrence)))) 
 
 ;;;###autoload
